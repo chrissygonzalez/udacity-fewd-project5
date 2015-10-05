@@ -20,7 +20,7 @@ var locations = [{
   position: {lat: 40.680557, lng: -73.975152}, title: 'Bklyn Larder'
 }];
 
-
+/*
 function initMap() {
   var myLatLng = {lat: 40.678473, lng: -73.978521};
 
@@ -42,3 +42,66 @@ function initMap() {
 }
 
 initMap();
+*/
+
+var ViewModel = function(){
+  var self = this;
+
+  var myLatLng = {lat: 40.678473, lng: -73.978521};
+
+  // Create a map object and specify the DOM element for display.
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: myLatLng,
+    scrollwheel: false,
+    zoom: 14
+  });
+
+  //console.log(map);
+
+  self.locationList = ko.observableArray([]);
+
+  locations.forEach(function(locationItem){
+    var newLocation = new Location(locationItem, map);
+    self.locationList.push(newLocation);
+  });
+
+  self.currentLocation = ko.observable(self.locationList()[0]);
+
+  self.changePlace = function(whichLocation){
+    self.currentLocation(whichLocation);
+  };
+
+}
+
+var Location = function(data, theMap){
+  this.marker = new google.maps.Marker({
+    map: theMap,
+    position: data.position,
+    title: data.title
+  });
+    console.log(this.marker);
+}
+
+/*
+var Cat = function(data){
+  this.clickCount = ko.observable(data.clickCount);
+  this.name = ko.observable(data.name);
+  this.imgSrc = ko.observable(data.imgSrc);
+  this.level = ko.computed(function(){
+    if(this.clickCount() < 20){
+      return 'Newborn';
+    } else if (this.clickCount() < 40){
+      return 'Baby';
+    } else if (this.clickCount() < 60) {
+      return 'Child';
+    } else if (this.clickCount() < 70) {
+      return 'Teenager';
+    }
+  }, this);
+
+  this.nicknames = ko.observableArray(data.nicknames);
+}
+*/
+
+ko.applyBindings(new ViewModel());
+//ViewModel();
