@@ -1,5 +1,15 @@
+body {
+	font-family: 'Arial', sans-serif;
+}
+
 ul {
-	width: 10%;
+	width: 15%;
+	padding: 20px;
 	float: left;
 	list-style-type: none;
+}
+
+li {
+	font-size: 14px;
+	line-height: 24px;
 }

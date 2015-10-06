@@ -8,8 +8,10 @@
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
-    <ul>
-      <li>thing 1</li>
+    <ul data-bind="foreach: locationList">
+
+      <li data-bind="text: title, click: $parent.openWindow"></li>
+
     </ul>
     <div id="map"></div>
     <script

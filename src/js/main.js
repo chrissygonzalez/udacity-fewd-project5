@@ -45,8 +45,6 @@ initMap();
 */
 
 var ViewModel = function(){
-  var self = this;
-
   var myLatLng = {lat: 40.678473, lng: -73.978521};
 
   // Create a map object and specify the DOM element for display.
@@ -56,13 +54,12 @@ var ViewModel = function(){
     zoom: 14
   });
 
-  //console.log(map);
+  var self = this;
 
   self.locationList = ko.observableArray([]);
 
   locations.forEach(function(locationItem){
-    var newLocation = new Location(locationItem, map);
-    self.locationList.push(newLocation);
+    self.locationList.push(new Location(locationItem, map));
   });
 
   self.currentLocation = ko.observable(self.locationList()[0]);
@@ -71,15 +68,21 @@ var ViewModel = function(){
     self.currentLocation(whichLocation);
   };
 
+  self.openWindow = function(whichLocation){
+    console.log(this.title());
+  }
+
 }
 
 var Location = function(data, theMap){
+  this.map = theMap;
+  this.position = data.position;
+  this.title = ko.observable(data.title);
   this.marker = new google.maps.Marker({
-    map: theMap,
-    position: data.position,
-    title: data.title
+    map: this.map,
+    position: this.position,
+    title: this.title()
   });
-    console.log(this.marker);
 }
 
 /*
@@ -104,4 +107,3 @@ var Cat = function(data){
 */
 
 ko.applyBindings(new ViewModel());
-//ViewModel();
