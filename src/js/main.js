@@ -21,89 +21,78 @@ var locations = [{
 }];
 
 /*
-function initMap() {
+function initMap(){
   var myLatLng = {lat: 40.678473, lng: -73.978521};
 
-  // Create a map object and specify the DOM element for display.
   var map = new google.maps.Map(document.getElementById('map'), {
-    center: myLatLng,
+    center: self.myLatLng,
     scrollwheel: false,
     zoom: 14
   });
-
-  for (var location in locations) {
-    //console.log(locations[location].position);
-    var marker = new google.maps.Marker({
-      map: map,
-      position: locations[location].position,
-      title: locations[location].title
-      });
-  }
 }
-
-initMap();
 */
 
-var ViewModel = function(){
-  var myLatLng = {lat: 40.678473, lng: -73.978521};
+var locationViewModel = function(){
+  var self = this;
 
-  // Create a map object and specify the DOM element for display.
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: myLatLng,
+  // set up the map
+  self.mapCenter = {lat: 40.678473, lng: -73.978521};
+
+  self.map = new google.maps.Map(document.getElementById('map'), {
+    center: self.mapCenter,
     scrollwheel: false,
     zoom: 14
   });
 
-  var self = this;
-
+  // list of locations, current location, change current location
   self.locationList = ko.observableArray([]);
 
   locations.forEach(function(locationItem){
-    self.locationList.push(new Location(locationItem, map));
+    self.locationList.push(new Location(locationItem, self.map));
   });
 
   self.currentLocation = ko.observable(self.locationList()[0]);
 
-  self.changePlace = function(whichLocation){
+  self.changeLocation = function(whichLocation){
     self.currentLocation(whichLocation);
+    self.infoWindow.setPosition(whichLocation.position);
+    self.updateInfoWindow(whichLocation);
+    console.log(self.currentLocation().title());
   };
 
+  // set up infoWindow, move infoWindow
+  self.infoWindow = new google.maps.InfoWindow({
+    content: self.currentLocation().title()
+  });
+
   self.openWindow = function(whichLocation){
-    console.log(this.title());
+    self.infoWindow.open(self.map, self.marker);
   }
 
+  self.updateInfoWindow = function(whichLocation){
+    self.infoWindow.setContent(whichLocation.title());
+  }
+
+  // update location and create/update infoWindow with current location
+  self.onClick = function(whichLocation){
+    self.changeLocation(whichLocation);
+    self.openWindow();
+  };
 }
 
-var Location = function(data, theMap){
-  this.map = theMap;
+var Location = function(data, map){
+  //console.log(data.position);
+  this.map = map;
   this.position = data.position;
   this.title = ko.observable(data.title);
+
   this.marker = new google.maps.Marker({
     map: this.map,
     position: this.position,
-    title: this.title()
+    title: this.title(),
+    anchorPoint: new google.maps.Point(3000, 3000)
   });
+
 }
 
-/*
-var Cat = function(data){
-  this.clickCount = ko.observable(data.clickCount);
-  this.name = ko.observable(data.name);
-  this.imgSrc = ko.observable(data.imgSrc);
-  this.level = ko.computed(function(){
-    if(this.clickCount() < 20){
-      return 'Newborn';
-    } else if (this.clickCount() < 40){
-      return 'Baby';
-    } else if (this.clickCount() < 60) {
-      return 'Child';
-    } else if (this.clickCount() < 70) {
-      return 'Teenager';
-    }
-  }, this);
-
-  this.nicknames = ko.observableArray(data.nicknames);
-}
-*/
-
-ko.applyBindings(new ViewModel());
+ko.applyBindings(new locationViewModel());

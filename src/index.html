@@ -10,7 +10,7 @@
   <body>
     <ul data-bind="foreach: locationList">
 
-      <li data-bind="text: title, click: $parent.openWindow"></li>
+      <li data-bind="click: $parent.onClick, text: title"></li>
 
     </ul>
     <div id="map"></div>
