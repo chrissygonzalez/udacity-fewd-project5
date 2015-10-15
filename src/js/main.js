@@ -35,6 +35,8 @@ function initMap(){
 var locationViewModel = function(){
   var self = this;
 
+  var form = $('#list-filter-form');
+
   // set up the map
   self.mapCenter = {lat: 40.678473, lng: -73.978521};
 
@@ -48,25 +50,43 @@ var locationViewModel = function(){
   self.locationList = ko.observableArray([]);
 
   locations.forEach(function(locationItem){
-    self.locationList.push(new Location(locationItem, self.map));
+    self.locationList.push(new Location(locationItem, self.map, self));
   });
 
   self.currentLocation = ko.observable(self.locationList()[0]);
+
+  // define the infoWindow
+  self.infoWindow = new google.maps.InfoWindow({
+    content: self.currentLocation().title(),
+    pixelOffset: new google.maps.Size(0, -38)
+  });
+
+  form.submit(function(){
+    //alert($('input:text').val());
+    var listLength = self.locationList().length;
+    var filterVal = $('input:text').val().toLowerCase();
+    var filterValLength = filterVal.length;
+
+    for (var i = 0; i < listLength; i++) {
+      var compareString = self.locationList()[i].title().substring(0, filterValLength).toLowerCase();
+      debugger;
+      if (filterVal === compareString) {
+        console.log(self.locationList()[i].title() + ' matched!');
+        debugger;
+      }
+      //console.log(self.locationList()[i].title() + ' ' + filterVal + ' ' + filterValLength);
+    }
+    return false;
+  });
 
   self.changeLocation = function(whichLocation){
     self.currentLocation(whichLocation);
     self.infoWindow.setPosition(whichLocation.position);
     self.updateInfoWindow(whichLocation);
-    console.log(self.currentLocation().title());
   };
 
-  // set up infoWindow, move infoWindow
-  self.infoWindow = new google.maps.InfoWindow({
-    content: self.currentLocation().title()
-  });
-
   self.openWindow = function(whichLocation){
-    self.infoWindow.open(self.map, self.marker);
+    self.infoWindow.open(self.map);
   }
 
   self.updateInfoWindow = function(whichLocation){
@@ -78,10 +98,13 @@ var locationViewModel = function(){
     self.changeLocation(whichLocation);
     self.openWindow();
   };
+
+  self.filterList = function(){
+
+  }
 }
 
-var Location = function(data, map){
-  //console.log(data.position);
+var Location = function(data, map, self){
   this.map = map;
   this.position = data.position;
   this.title = ko.observable(data.title);
@@ -89,8 +112,13 @@ var Location = function(data, map){
   this.marker = new google.maps.Marker({
     map: this.map,
     position: this.position,
-    title: this.title(),
-    anchorPoint: new google.maps.Point(3000, 3000)
+    title: this.title()
+  });
+
+  this.marker.addListener('click', function(){
+    self.infoWindow.open(this.map);
+    self.infoWindow.setContent(this.title);
+    self.infoWindow.setPosition(this.position);
   });
 
 }

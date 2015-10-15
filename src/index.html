@@ -8,16 +8,25 @@
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
+    <section class="location-list">
+      <form id="list-filter-form">
+        <label>Filter the list
+          <input id="filter" type="text" placeholder="Filter the list" name="list-filter"></input>
+        </label>
+        <input type="submit" value="Submit" />
+    </form>
     <ul data-bind="foreach: locationList">
 
       <li data-bind="click: $parent.onClick, text: title"></li>
 
     </ul>
+  </section>
     <div id="map"></div>
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0E5jPjr2xek50Ny-ljRLtHPZSfcPgLes">
     </script>
     <script src='js/lib/knockout-3.3.0.js'></script>
+    <script src='js/lib/jquery-2.1.4.min.js'></script>
     <script src="js/main.js"></script>
   </body>
 </html>

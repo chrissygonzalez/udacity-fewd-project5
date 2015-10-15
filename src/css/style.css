@@ -3,13 +3,16 @@ body {
 }
 
 ul {
-	width: 15%;
+	width: 100%;
 	padding: 20px;
-	float: left;
 	list-style-type: none;
 }
 
 li {
 	font-size: 14px;
 	line-height: 24px;
+}
+
+.location-list {
+	float: left;
 }
