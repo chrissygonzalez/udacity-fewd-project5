@@ -62,17 +62,23 @@ var locationViewModel = function(){
   });
 
   form.submit(function(){
-    //alert($('input:text').val());
     var listLength = self.locationList().length;
     var filterVal = $('input:text').val().toLowerCase();
     var filterValLength = filterVal.length;
+    //debugger;
+    for (var i = listLength-1; i > -1; i--) {
+      var compareString = self.locationList()[i].title().toLowerCase();
+      //debugger;
 
-    for (var i = 0; i < listLength; i++) {
-      var compareString = self.locationList()[i].title().substring(0, filterValLength).toLowerCase();
-      debugger;
-      if (filterVal === compareString) {
-        console.log(self.locationList()[i].title() + ' matched!');
-        debugger;
+// trying to figure out
+// how to remove list items and map markers
+// may need to make the locations observables
+// and give them some sort of visibility function?
+
+      if (compareString.indexOf(filterVal) < 0) {
+        console.log(self.locationList()[i].title());
+        //self.locationList().remove(self.locationList()[i]);
+        //debugger;
       }
       //console.log(self.locationList()[i].title() + ' ' + filterVal + ' ' + filterValLength);
     }
