@@ -20,18 +20,6 @@ var locations = [{
   position: {lat: 40.680557, lng: -73.975152}, title: 'Bklyn Larder'
 }];
 
-/*
-function initMap(){
-  var myLatLng = {lat: 40.678473, lng: -73.978521};
-
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: self.myLatLng,
-    scrollwheel: false,
-    zoom: 14
-  });
-}
-*/
-
 var locationViewModel = function(){
   var self = this;
 
@@ -76,9 +64,10 @@ var locationViewModel = function(){
 // and give them some sort of visibility function?
 
       if (compareString.indexOf(filterVal) < 0) {
-        console.log(self.locationList()[i].title());
+        //ebugger;
+        self.removeLocation(self.locationList()[i]);
+
         //self.locationList().remove(self.locationList()[i]);
-        //debugger;
       }
       //console.log(self.locationList()[i].title() + ' ' + filterVal + ' ' + filterValLength);
     }
@@ -105,9 +94,10 @@ var locationViewModel = function(){
     self.openWindow();
   };
 
-  self.filterList = function(){
-
-  }
+  self.removeLocation = function(location){
+    //debugger;
+    self.locationList.remove(location);
+  };
 }
 
 var Location = function(data, map, self){
