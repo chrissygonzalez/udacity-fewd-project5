@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript">
+      WebFontConfig = {
+        google: { families: [ 'Montserrat::latin' ] }
+      };
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+          '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+    </script>
+
     <style type="text/css">
       html, body { height: 100%; margin: 0; padding: 0; }
       #map { height: 100%; }
@@ -10,11 +25,10 @@
   <body>
     <section class="location-list">
       <form id="list-filter-form">
-        <label>Filter the list
-          <input id="filter" type="text" placeholder="Filter the list" name="list-filter"></input>
-        </label>
+        <input id="filter" type="text" placeholder="Filter the list" name="list-filter"></input>
         <input type="submit" value="Submit" />
     </form>
+    <hr>
     <ul data-bind="foreach: locationList">
 
       <li data-bind="click: $parent.onClick, text: title"></li>

@@ -22,7 +22,6 @@ var locations = [{
 
 var locationViewModel = function(){
   var self = this;
-
   var form = $('#list-filter-form');
 
   // set up the map
@@ -31,7 +30,7 @@ var locationViewModel = function(){
   self.map = new google.maps.Map(document.getElementById('map'), {
     center: self.mapCenter,
     scrollwheel: false,
-    zoom: 14
+    zoom: 15
   });
 
   // list of locations, current location, change current location
@@ -56,20 +55,9 @@ var locationViewModel = function(){
     //debugger;
     for (var i = listLength-1; i > -1; i--) {
       var compareString = self.locationList()[i].title().toLowerCase();
-      //debugger;
-
-// trying to figure out
-// how to remove list items and map markers
-// may need to make the locations observables
-// and give them some sort of visibility function?
-
       if (compareString.indexOf(filterVal) < 0) {
-        //ebugger;
         self.removeLocation(self.locationList()[i]);
-
-        //self.locationList().remove(self.locationList()[i]);
       }
-      //console.log(self.locationList()[i].title() + ' ' + filterVal + ' ' + filterValLength);
     }
     return false;
   });
@@ -84,18 +72,45 @@ var locationViewModel = function(){
     self.infoWindow.open(self.map);
   }
 
-  self.updateInfoWindow = function(whichLocation){
-    self.infoWindow.setContent(whichLocation.title());
+  self.updateInfoWindow = function(whichLocation, foursqData){
+    //debugger;
+    var contentString = '<p>' + whichLocation.title() + '<br>' + foursqData + '</p>';
+    self.infoWindow.setContent(contentString);
   }
 
   // update location and create/update infoWindow with current location
   self.onClick = function(whichLocation){
+    var myTitle = whichLocation.title;
+    var myPos = whichLocation.position;
+
+    $.ajax({
+      url: 'https://api.foursquare.com/v2/venues/search?ll=' + myPos.lat + ',' + myPos.lng + '&intent=match&query=' + myTitle() + '&client_id=RBVKWXN2WH0OQLFMDGKAKNIAIPOLODHEKBLYIHMCQYX3AKJ0&client_secret=LUFOAZGAL4BYJJKBGY2ZJ0MNHRXFS0DOTKCWIW0GXYUI4X1X&v=20151018',
+      context: document.body
+    }).done(function(data) {
+      if (data.response.venues.length > 0) {
+        var venue = data.response.venues[0];
+        var address = venue.location.formattedAddress.join('<br>');
+        var phone = venue.contact.formattedPhone;
+        var foursqData = address + '<br>' + phone;
+        self.updateInfoWindow(whichLocation, foursqData);
+      } else {
+        var foursqData = 'not found';
+        self.updateInfoWindow(whichLocation, foursqData);
+      }
+    })
+    .fail(function(){
+      var foursqData = 'not found';
+      self.updateInfoWindow(whichLocation, foursqData);
+    });
+
     self.changeLocation(whichLocation);
     self.openWindow();
+
   };
 
   self.removeLocation = function(location){
     //debugger;
+    location.marker.setVisible(false);
     self.locationList.remove(location);
   };
 }

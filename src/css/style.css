@@ -1,18 +1,39 @@
 body {
-	font-family: 'Arial', sans-serif;
+	font-family: 'Montserrat', sans-serif;
+	margin: 0;
+}
+
+input {
+	margin: 15px 0 5px 25px;
+}
+
+hr {
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.2);
 }
 
 ul {
 	width: 100%;
-	padding: 20px;
 	list-style-type: none;
+	padding: 0;
+	margin: 0;
 }
 
 li {
 	font-size: 14px;
 	line-height: 24px;
+	color: #fff;
+	cursor: pointer;
+	width: 100%;
+	padding: 7px 25px;
+}
+
+li:hover {
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .location-list {
 	float: left;
+	background-color: #8b572a;
+	height: 100%;
 }
