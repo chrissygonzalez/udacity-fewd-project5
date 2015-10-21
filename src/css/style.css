@@ -37,3 +37,7 @@ li:hover {
 	background-color: #8b572a;
 	height: 100%;
 }
+
+.selected {
+	background-color: rgba(0, 0, 0, 0.2);
+}

@@ -31,7 +31,7 @@
     <hr>
     <ul data-bind="foreach: locationList">
 
-      <li data-bind="click: $parent.onClick, text: title"></li>
+      <li data-bind="click: $parent.onClick, text: title, css : {'selected' : isActive}""></li>
 
     </ul>
   </section>

@@ -59,6 +59,9 @@ var locationViewModel = function(){
         self.removeLocation(self.locationList()[i]);
       }
     }
+
+    self.infoWindow.close();
+    
     return false;
   });
 
@@ -74,12 +77,25 @@ var locationViewModel = function(){
 
   self.updateInfoWindow = function(whichLocation, foursqData){
     //debugger;
-    var contentString = '<p>' + whichLocation.title() + '<br>' + foursqData + '</p>';
+    var contentString = '';
+    if(foursqData){
+      contentString = '<p>' + whichLocation.title() + '<br>' + foursqData + '</p>';
+    } else {
+      contentString = '<p>' + whichLocation.title() + '</p>';
+    }
     self.infoWindow.setContent(contentString);
   }
 
+  self.toggleActive = function(whichLocation){
+    for (var i = 0; i < self.locationList().length; i++){
+      self.locationList()[i].isActive(false);
+    }
+        whichLocation.isActive(!whichLocation.isActive());//toggle the isActive value between true/false
+    }
+
   // update location and create/update infoWindow with current location
   self.onClick = function(whichLocation){
+    //console.log('whichLocation is ' + whichLocation);
     var myTitle = whichLocation.title;
     var myPos = whichLocation.position;
 
@@ -91,20 +107,20 @@ var locationViewModel = function(){
         var venue = data.response.venues[0];
         var address = venue.location.formattedAddress.join('<br>');
         var phone = venue.contact.formattedPhone;
-        var foursqData = address + '<br>' + phone;
+        var foursqData = address;
+        if(phone) { foursqData = foursqData + '<br>' + phone};
         self.updateInfoWindow(whichLocation, foursqData);
       } else {
-        var foursqData = 'not found';
-        self.updateInfoWindow(whichLocation, foursqData);
+        self.updateInfoWindow(whichLocation);
       }
     })
     .fail(function(){
-      var foursqData = 'not found';
-      self.updateInfoWindow(whichLocation, foursqData);
+      self.updateInfoWindow(whichLocation);
     });
 
     self.changeLocation(whichLocation);
     self.openWindow();
+    self.toggleActive(whichLocation);
 
   };
 
@@ -116,6 +132,7 @@ var locationViewModel = function(){
 }
 
 var Location = function(data, map, self){
+  var that = this;
   this.map = map;
   this.position = data.position;
   this.title = ko.observable(data.title);
@@ -127,10 +144,13 @@ var Location = function(data, map, self){
   });
 
   this.marker.addListener('click', function(){
-    self.infoWindow.open(this.map);
-    self.infoWindow.setContent(this.title);
-    self.infoWindow.setPosition(this.position);
+    //self.infoWindow.open(this.map);
+    //self.infoWindow.setContent(this.title);
+    //self.infoWindow.setPosition(this.position);
+    self.onClick(that);
   });
+
+  this.isActive = ko.observable(false);
 
 }
 
