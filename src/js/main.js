@@ -61,7 +61,7 @@ var locationViewModel = function(){
     }
 
     self.infoWindow.close();
-    
+
     return false;
   });
 
@@ -79,9 +79,9 @@ var locationViewModel = function(){
     //debugger;
     var contentString = '';
     if(foursqData){
-      contentString = '<p>' + whichLocation.title() + '<br>' + foursqData + '</p>';
+      contentString = '<p><span class="bold">' + whichLocation.title() + '</span><br>' + foursqData + '</p>';
     } else {
-      contentString = '<p>' + whichLocation.title() + '</p>';
+      contentString = '<p class="bold">' + whichLocation.title() + '</p>';
     }
     self.infoWindow.setContent(contentString);
   }
@@ -129,6 +129,22 @@ var locationViewModel = function(){
     location.marker.setVisible(false);
     self.locationList.remove(location);
   };
+
+  self.isMenuOpen = true;
+
+  $('#hamburger').click(function(){
+
+    self.isMenuOpen = !self.isMenuOpen;
+    console.log(self.isMenuOpen);
+
+    if(self.isMenuOpen) {
+      $('.location-list').animate(
+      {left: '+=350'}, 500);
+    } else {
+    $('.location-list').animate(
+      {left: '-=350'}, 500);
+    }
+  });
 }
 
 var Location = function(data, map, self){

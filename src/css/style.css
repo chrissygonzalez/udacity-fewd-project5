@@ -3,6 +3,21 @@ body {
 	margin: 0;
 }
 
+header {
+	background-color: #8b572a;
+	position: relative;
+	height: 56px;
+	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+	z-index: 10;
+}
+
+h1 {
+	display: inline;
+	color: #fff;
+	text-transform: uppercase;
+	font-size: 16px;
+}
+
 input {
 	margin: 15px 0 5px 25px;
 }
@@ -26,18 +41,31 @@ li {
 	cursor: pointer;
 	width: 100%;
 	padding: 7px 25px;
+	box-sizing: border-box;
 }
 
 li:hover {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.1);
 }
 
 .location-list {
-	float: left;
+	position: fixed;
 	background-color: #8b572a;
 	height: 100%;
+	width: 350px;
+	left: 0;
+	z-index: 2;
 }
 
 .selected {
 	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.bold {
+	font-weight: bold;
+}
+
+#map {
+	position: relative;
+	z-index: 0;
 }
