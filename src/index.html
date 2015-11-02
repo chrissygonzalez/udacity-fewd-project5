@@ -20,22 +20,24 @@
       html, body { height: 100%; margin: 0; padding: 0; }
       #map { height: 100%; }
     </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
     <header>
-      <button id="hamburger">::</button>
+      <button id="hamburger" class="fa fa-navicon"></button>
       <h1>Neighborhood Map</h1>
     </header>
     <section class="location-list">
       <form id="list-filter-form" autocomplete="off">
         <input id="filter" type="text" placeholder="Filter the list" name="list-filter"></input>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Go" />
     </form>
+    <a href="" id="reset">Reset filter</a>
     <hr>
     <ul data-bind="foreach: locationList">
 
-      <li data-bind="click: $parent.onClick, text: title, css : {'selected' : isActive}""></li>
+      <li data-bind="click: $parent.onClick, text: title, css : {'selected' : isActive}"></li>
 
     </ul>
   </section>

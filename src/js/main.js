@@ -30,7 +30,60 @@ var locationViewModel = function(){
   self.map = new google.maps.Map(document.getElementById('map'), {
     center: self.mapCenter,
     scrollwheel: false,
-    zoom: 15
+    zoom: 15,
+    mapTypeControl: false,
+    styles: [
+  {
+    "featureType": "landscape",
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "color": "#E0E0CD" }
+    ]
+  },{
+    "featureType": "road",
+    "stylers": [
+      { "color": "#F7F7E7" }
+    ]
+  },{
+    "featureType": "water",
+    "stylers": [
+      { "color": "#C1C9DB" }
+    ]
+  },{
+    "featureType": "poi.park",
+    "stylers": [
+      { "color": "#CBE2B3" }
+    ]
+  },{
+    "elementType": "labels.text.fill",
+    "stylers": [
+      { "color": "#939378" }
+    ]
+  },{
+    "featureType": "poi.medical",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#E2DBB1" }
+    ]
+  },{
+    "featureType": "poi.school",
+    "elementType": "geometry",
+    "stylers": [
+      { "color": "#E2DBB1" }
+    ]
+  },{
+    "featureType": "transit",
+    "elementType": "labels.icon",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },{
+    "featureType": "poi.business",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  }
+]
   });
 
   // list of locations, current location, change current location
@@ -60,10 +113,18 @@ var locationViewModel = function(){
       }
     }
 
+    $('#reset').show();
+
     self.infoWindow.close();
 
     return false;
   });
+
+  self.resetFilter = function(){
+    locations.forEach(function(locationItem){
+      self.locationList.push(new Location(locationItem, self.map, self));
+    });
+  };
 
   self.changeLocation = function(whichLocation){
     self.currentLocation(whichLocation);
@@ -144,6 +205,10 @@ var locationViewModel = function(){
     $('.location-list').animate(
       {left: '-=350'}, 500);
     }
+  });
+
+  $('#reset').click(function(){
+    self.resetFilter();
   });
 }
 
