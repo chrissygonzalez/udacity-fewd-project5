@@ -1,3 +1,4 @@
+/** hardcoded locations for map pins **/
 var locations = [{
   position: {lat: 40.678856, lng: -73.987255}, title: 'Ample Hills Creamery'
 },{
@@ -20,13 +21,18 @@ var locations = [{
   position: {lat: 40.680557, lng: -73.975152}, title: 'Bklyn Larder'
 }];
 
+/** the view model **/
 var locationViewModel = function(){
   var self = this;
   var form = $('#list-filter-form');
 
-  // set up the map
+  /** keeps track of whether filter menu is showing */
+  self.isMenuOpen = true;
+
+  /** centers the map in Park Slope, Brooklyn */
   self.mapCenter = {lat: 40.678473, lng: -73.978521};
 
+  /** sets up and styles the Google map */
   self.map = new google.maps.Map(document.getElementById('map'), {
     center: self.mapCenter,
     scrollwheel: false,
@@ -86,77 +92,125 @@ var locationViewModel = function(){
 ]
   });
 
-  // list of locations, current location, change current location
+  /** observable array of each location in data model */
   self.locationList = ko.observableArray([]);
 
+  /** push each location in data model into ko observable array */
   locations.forEach(function(locationItem){
     self.locationList.push(new Location(locationItem, self.map, self));
   });
 
+  /** set current location to ko observable containing first location in array */
   self.currentLocation = ko.observable(self.locationList()[0]);
 
-  // define the infoWindow
+  /** set up a single infoWindow */
   self.infoWindow = new google.maps.InfoWindow({
     content: self.currentLocation().title(),
     pixelOffset: new google.maps.Size(0, -38)
   });
 
-  form.submit(function(){
-    var listLength = self.locationList().length;
-    var filterVal = $('input:text').val().toLowerCase();
-    var filterValLength = filterVal.length;
-    //debugger;
-    for (var i = listLength-1; i > -1; i--) {
-      var compareString = self.locationList()[i].title().toLowerCase();
-      if (compareString.indexOf(filterVal) < 0) {
-        self.removeLocation(self.locationList()[i]);
-      }
+  /** open infoWindow */
+  self.openWindow = function(whichLocation){
+    self.infoWindow.open(self.map);
+  }
+
+  /** update current location, updates infoWindow content and position */
+  self.changeLocation = function(whichLocation){
+    self.currentLocation(whichLocation);
+    /** setPosition is part of Google Maps API */
+    self.infoWindow.setPosition(whichLocation.position);
+  };
+
+  /** update and format content of infoWindow with API data */
+  self.updateInfoWindow = function(whichLocation, flickrData, foursqData){
+    var contentString = '';
+    if(flickrData){
+      contentString += '<img src="' + flickrData + '" alt="Flickr photo">';
     }
+    if(foursqData){
+      contentString += '<p><span class="bold">' + whichLocation.title() + '</span><br>' + foursqData + '</p>';
+    } else {
+      contentString += '<p class="bold">' + whichLocation.title() + '</p>';
+    }
+    /** setContent is part of Google Maps API */
+    self.infoWindow.setContent(contentString);
+  }
 
-    $('#reset').show();
+  /** stop showing locations that don't match filter search */
+  self.removeLocation = function(location){
+    location.marker.setVisible(false);
+    self.locationList.remove(location);
+  };
 
-    self.infoWindow.close();
+  /** set all locations to inactive, then set selected location to active */
+  self.toggleActive = function(whichLocation){
+    for (var i = 0; i < self.locationList().length; i++){
+      self.locationList()[i].isActive(false);
+    }
+      whichLocation.isActive(!whichLocation.isActive());
+  };
 
-    return false;
-  });
-
+  /** clear filter input and reset locationList to its original state */
   self.resetFilter = function(){
     locations.forEach(function(locationItem){
       self.locationList.push(new Location(locationItem, self.map, self));
     });
   };
 
-  self.changeLocation = function(whichLocation){
-    self.currentLocation(whichLocation);
-    self.infoWindow.setPosition(whichLocation.position);
-    self.updateInfoWindow(whichLocation);
+/* this is the new version of my ajax functions */
+
+  self.getApiData = function(whichLocation){
+    var myTitle = whichLocation.title;
+    var myPos = whichLocation.position;
+    var myTxt = whichLocation.title();
+    var searchTxt = myTxt.split(' ').join('+');
+
+    $.when(
+      $.ajax({
+      url: 'https://api.foursquare.com/v2/venues/search?ll=' + myPos.lat + ',' + myPos.lng + '&intent=match&query=' + myTitle() + '&client_id=RBVKWXN2WH0OQLFMDGKAKNIAIPOLODHEKBLYIHMCQYX3AKJ0&client_secret=LUFOAZGAL4BYJJKBGY2ZJ0MNHRXFS0DOTKCWIW0GXYUI4X1X&v=20151018',
+        context: document.body
+      }),
+      $.ajax({
+      url: 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d9e2b24a8f57f49550dccb519a8081a2&text=' + searchTxt +'&lat=' + myPos.lat + '&lon=' + myPos.lng + '&per_page=1&format=json&nojsoncallback=1',
+      context: document.body
+    })
+    ).done(function(data1, data2){
+      if(data1[0].response.venues[0]) {
+        var venue = data1[0].response.venues[0];
+        var address = venue.location.formattedAddress.join('<br>');
+        var phone = venue.contact.formattedPhone;
+        var foursqData = address;
+        if(phone) { foursqData = foursqData + '<br>' + phone};
+      } else {
+        foursqData = null;
+      }
+      var farmId = data2[0].photos.photo[0].farm;
+      var serverId = data2[0].photos.photo[0].server;
+      var photoId = data2[0].photos.photo[0].id;
+      var secret = data2[0].photos.photo[0].secret;
+
+      var flickrData = 'https://farm' + farmId + '.staticflickr.com/' +  serverId + '/' + photoId + '_' + secret + '_q.jpg';
+
+      self.updateInfoWindow(whichLocation, flickrData, foursqData);
+
+      self.changeLocation(whichLocation);
+      self.map.panTo(whichLocation.position);
+      self.openWindow();
+      self.toggleActive(whichLocation);
+    });
   };
 
-  self.openWindow = function(whichLocation){
-    self.infoWindow.open(self.map);
-  }
+  self.onClick = function(whichLocation) {
+    self.getApiData(whichLocation);
+  };
 
-  self.updateInfoWindow = function(whichLocation, foursqData){
-    //debugger;
-    var contentString = '';
-    if(foursqData){
-      contentString = '<p><span class="bold">' + whichLocation.title() + '</span><br>' + foursqData + '</p>';
-    } else {
-      contentString = '<p class="bold">' + whichLocation.title() + '</p>';
-    }
-    self.infoWindow.setContent(contentString);
-  }
 
-  self.toggleActive = function(whichLocation){
-    for (var i = 0; i < self.locationList().length; i++){
-      self.locationList()[i].isActive(false);
-    }
-        whichLocation.isActive(!whichLocation.isActive());//toggle the isActive value between true/false
-    }
+/*
+* ----------------------------------------
+* the original version of my ajax functions
 
   // update location and create/update infoWindow with current location
   self.onClick = function(whichLocation){
-    //console.log('whichLocation is ' + whichLocation);
     var myTitle = whichLocation.title;
     var myPos = whichLocation.position;
 
@@ -180,21 +234,33 @@ var locationViewModel = function(){
     });
 
     self.changeLocation(whichLocation);
+    self.map.panTo(whichLocation.position);
     self.openWindow();
     self.toggleActive(whichLocation);
 
+    self.tempFlickr(whichLocation);
   };
 
-  self.removeLocation = function(location){
-    //debugger;
-    location.marker.setVisible(false);
-    self.locationList.remove(location);
-  };
+  self.tempFlickr = function(whichLocation){
+     var myTxt = whichLocation.title();
+     var searchTxt = myTxt.split(' ').join('+');
+     var myPos = whichLocation.position;
+    $.ajax({
+      url: 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d9e2b24a8f57f49550dccb519a8081a2&text=' + searchTxt +'&lat=' + myPos.lat + '&lon=' + myPos.lng + '&per_page=1&format=json&nojsoncallback=1',
+      context: document.body
+    }).done(function(data){
+      var farmId = data.photos.photo[0].farm;
+      var serverId = data.photos.photo[0].server;
+      var photoId = data.photos.photo[0].id;
+      var secret = data.photos.photo[0].secret;
+      console.log('https://farm' + farmId + '.staticflickr.com/' +  serverId + '/' + photoId + '_' + secret + '_q.jpg');
+    });
+  }
 
-  self.isMenuOpen = true;
+  */
 
+  /** opens/closes the filter menu */
   $('#hamburger').click(function(){
-
     self.isMenuOpen = !self.isMenuOpen;
     console.log(self.isMenuOpen);
 
@@ -207,11 +273,39 @@ var locationViewModel = function(){
     }
   });
 
+  /** filter location list based on input */
+  form.submit(function(){
+    var listLength = self.locationList().length;
+    var filterVal = $('input:text').val().toLowerCase();
+    var filterValLength = filterVal.length;
+
+    /** compare input to location names, remove ones that don't match */
+    for (var i = listLength-1; i > -1; i--) {
+      var compareString = self.locationList()[i].title().toLowerCase();
+      if (compareString.indexOf(filterVal) < 0) {
+        self.removeLocation(self.locationList()[i]);
+      }
+    }
+    /** show link to reset filter */
+    $('#reset').show();
+    /** close the infoWindow if it was open */
+    self.infoWindow.close();
+    return false;
+  });
+
+  /** resets the filter after a search */
   $('#reset').click(function(){
     self.resetFilter();
   });
 }
 
+/**
+* Represents a location on the Google map.
+* @constructor
+* @param {object} data - a single location object from data model
+* @param (object) map - reference to the Google map
+* @param (object) self - reference to the locationViewModel context
+ **/
 var Location = function(data, map, self){
   var that = this;
   this.map = map;
@@ -225,9 +319,6 @@ var Location = function(data, map, self){
   });
 
   this.marker.addListener('click', function(){
-    //self.infoWindow.open(this.map);
-    //self.infoWindow.setContent(this.title);
-    //self.infoWindow.setPosition(this.position);
     self.onClick(that);
   });
 
@@ -236,3 +327,10 @@ var Location = function(data, map, self){
 }
 
 ko.applyBindings(new locationViewModel());
+
+/*
+d9e2b24a8f57f49550dccb519a8081a2
+
+Secret:
+226389f967702029
+*/
