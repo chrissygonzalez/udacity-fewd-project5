@@ -38,7 +38,7 @@ var locations = [{
 },{
   position: {lat: 40.666869, lng: -73.984626}, title: 'Bar Toto'
 }, {
-  position: {lat: 40.663868, lng: -73.983718}, title: 'A Show Grows in Brooklyn'
+  position: {lat: 40.663868, lng: -73.983718}, title: 'A Shoe Grows in Brooklyn'
 }];
 
 /** the view model **/

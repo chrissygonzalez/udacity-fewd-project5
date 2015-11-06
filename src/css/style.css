@@ -8,7 +8,7 @@ button:focus {
 }
 
 header {
-	background-color: #72954E;
+	background-color: #72954e;
 	position: fixed;
 	width: 100%;
 	height: 56px;
@@ -55,12 +55,12 @@ input[type=submit] {
 	float: right;
 	margin: 0;
 	height: 40px;
-	background-color: #59A2DE;
+	background-color: #59a2de;
 	color: #fff;
 }
 
 input[type=submit]:hover {
-	background-color: #4F91C8;
+	background-color: #4f91c8;
 }
 
 hr {
@@ -91,7 +91,7 @@ li:hover {
 
 a {
 	text-decoration: none;
-	color: #9ED0FA;
+	color: #9ed0fa;
 	font-size: 14px;
 	padding-right: 25px;
 	padding-bottom: 7px;
@@ -112,6 +112,10 @@ a {
 	background-color: rgba(255, 255, 255, 0.5);
 }
 
+.bold {
+	font-weight: bold;
+}
+
 .clearfix:after {
   content: "";
   display: table;
@@ -119,14 +123,26 @@ a {
 }
 
 .location-list {
-	position: fixed;
-	background-color: #677C52;
-	height: 100%;
+	position: absolute;
+	background-color: #677c52;
+	height: calc(100% - 56px);
 	width: 350px;
 	top: 56px;
 	left: 0;
 	z-index: 2;
 	overflow: auto;
+}
+
+.selected {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+#hamburger {
+	background-color: transparent;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	width: 26px;
 }
 
 #list-filter-form {
@@ -139,25 +155,9 @@ a {
 	overflow: hidden;
 }
 
-.selected {
-	background-color: rgba(0, 0, 0, 0.2);
-}
-
-.bold {
-	font-weight: bold;
-}
-
 #map {
 	position: relative;
 	z-index: 0;
-}
-
-#hamburger {
-	background-color: transparent;
-	border: none;
-	color: #fff;
-	cursor: pointer;
-	width: 26px;
 }
 
 #reset {
