@@ -19,6 +19,26 @@ var locations = [{
   position: {lat: 40.680887, lng: -73.975871}, title: 'A. Cheng'
 },{
   position: {lat: 40.680557, lng: -73.975152}, title: 'Bklyn Larder'
+},{
+  position: {lat: 40.674363, lng: -73.981648}, title: 'La Villa'
+},{
+  position: {lat: 40.679625, lng: -73.984193}, title: 'Brooklyn Boulders'
+},{
+  position: {lat: 40.677606, lng: -73.984065}, title: 'Dinosaur Bar-B-Que'
+},{
+  position: {lat: 40.677282, lng: -73.980109}, title: 'Konditori'
+},{
+  position: {lat: 40.674588, lng: -73.975089}, title: 'Roma Pizza'
+},{
+  position: {lat: 40.670267, lng: -73.978970}, title: 'Mr. Falafel'
+},{
+  position: {lat: 40.666512, lng: -73.981649}, title: 'Buttermilk Bakeshop'
+},{
+  position: {lat: 40.665231, lng: -73.982654}, title: 'Cafe Grumpy'
+},{
+  position: {lat: 40.666869, lng: -73.984626}, title: 'Bar Toto'
+}, {
+  position: {lat: 40.663868, lng: -73.983718}, title: 'A Show Grows in Brooklyn'
 }];
 
 /** the view model **/
@@ -112,7 +132,7 @@ var locationViewModel = function(){
   /** open infoWindow */
   self.openWindow = function(whichLocation){
     self.infoWindow.open(self.map);
-  }
+  };
 
   /** update current location, updates infoWindow content and position */
   self.changeLocation = function(whichLocation){
@@ -134,7 +154,7 @@ var locationViewModel = function(){
     }
     /** setContent is part of Google Maps API */
     self.infoWindow.setContent(contentString);
-  }
+  };
 
   /** stop showing locations that don't match filter search */
   self.removeLocation = function(location){
@@ -186,12 +206,13 @@ var locationViewModel = function(){
       context: document.body
     })
     ).done(function(data1, data2){
+      var venue, address, phone, foursqData;
       if(data1[0].response.venues[0]) {
-        var venue = data1[0].response.venues[0];
-        var address = venue.location.formattedAddress.join('<br>');
-        var phone = venue.contact.formattedPhone;
-        var foursqData = address;
-        if(phone) { foursqData = foursqData + '<br>' + phone};
+        venue = data1[0].response.venues[0];
+        address = venue.location.formattedAddress.join('<br>');
+        vphone = venue.contact.formattedPhone;
+        foursqData = address;
+        if(phone) { foursqData = foursqData + '<br>' + phone; }
       } else {
         foursqData = null;
       }
@@ -209,7 +230,8 @@ var locationViewModel = function(){
       self.openWindow();
       self.toggleActive(whichLocation);
       whichLocation.marker.setAnimation(google.maps.Animation.BOUNCE);
-    });
+    })
+    .fail(console.log('ajax error'));
   };
 
   self.onClick = function(whichLocation) {
@@ -254,7 +276,7 @@ var locationViewModel = function(){
   $('#reset').click(function(){
     self.resetFilter();
   });
-}
+};
 
 /**
 * Represents a location on the Google map.
@@ -282,7 +304,7 @@ var Location = function(data, map, self){
 
   this.isActive = ko.observable(false);
 
-}
+};
 
 ko.applyBindings(new locationViewModel());
 
