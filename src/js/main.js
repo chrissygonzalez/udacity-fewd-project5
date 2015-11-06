@@ -144,11 +144,22 @@ var locationViewModel = function(){
 
   /** set all locations to inactive, then set selected location to active */
   self.toggleActive = function(whichLocation){
+    self.allInactive();
+    whichLocation.isActive(!whichLocation.isActive());
+  };
+
+  /** set all locations to inActive */
+  self.allInactive = function() {
     for (var i = 0; i < self.locationList().length; i++){
       self.locationList()[i].isActive(false);
+      self.locationList()[i].marker.setAnimation(google.maps.Animation.null);
     }
-      whichLocation.isActive(!whichLocation.isActive());
   };
+
+  /** deselect list item on infowindow close */
+  google.maps.event.addListener(self.infoWindow, "closeclick", function(){
+    self.allInactive();
+  });
 
   /** clear filter input and reset locationList to its original state */
   self.resetFilter = function(){
@@ -197,67 +208,13 @@ var locationViewModel = function(){
       self.map.panTo(whichLocation.position);
       self.openWindow();
       self.toggleActive(whichLocation);
+      whichLocation.marker.setAnimation(google.maps.Animation.BOUNCE);
     });
   };
 
   self.onClick = function(whichLocation) {
     self.getApiData(whichLocation);
   };
-
-
-/*
-* ----------------------------------------
-* the original version of my ajax functions
-
-  // update location and create/update infoWindow with current location
-  self.onClick = function(whichLocation){
-    var myTitle = whichLocation.title;
-    var myPos = whichLocation.position;
-
-    $.ajax({
-      url: 'https://api.foursquare.com/v2/venues/search?ll=' + myPos.lat + ',' + myPos.lng + '&intent=match&query=' + myTitle() + '&client_id=RBVKWXN2WH0OQLFMDGKAKNIAIPOLODHEKBLYIHMCQYX3AKJ0&client_secret=LUFOAZGAL4BYJJKBGY2ZJ0MNHRXFS0DOTKCWIW0GXYUI4X1X&v=20151018',
-      context: document.body
-    }).done(function(data) {
-      if (data.response.venues.length > 0) {
-        var venue = data.response.venues[0];
-        var address = venue.location.formattedAddress.join('<br>');
-        var phone = venue.contact.formattedPhone;
-        var foursqData = address;
-        if(phone) { foursqData = foursqData + '<br>' + phone};
-        self.updateInfoWindow(whichLocation, foursqData);
-      } else {
-        self.updateInfoWindow(whichLocation);
-      }
-    })
-    .fail(function(){
-      self.updateInfoWindow(whichLocation);
-    });
-
-    self.changeLocation(whichLocation);
-    self.map.panTo(whichLocation.position);
-    self.openWindow();
-    self.toggleActive(whichLocation);
-
-    self.tempFlickr(whichLocation);
-  };
-
-  self.tempFlickr = function(whichLocation){
-     var myTxt = whichLocation.title();
-     var searchTxt = myTxt.split(' ').join('+');
-     var myPos = whichLocation.position;
-    $.ajax({
-      url: 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d9e2b24a8f57f49550dccb519a8081a2&text=' + searchTxt +'&lat=' + myPos.lat + '&lon=' + myPos.lng + '&per_page=1&format=json&nojsoncallback=1',
-      context: document.body
-    }).done(function(data){
-      var farmId = data.photos.photo[0].farm;
-      var serverId = data.photos.photo[0].server;
-      var photoId = data.photos.photo[0].id;
-      var secret = data.photos.photo[0].secret;
-      console.log('https://farm' + farmId + '.staticflickr.com/' +  serverId + '/' + photoId + '_' + secret + '_q.jpg');
-    });
-  }
-
-  */
 
   /** opens/closes the filter menu */
   $('#hamburger').click(function(){
@@ -315,7 +272,8 @@ var Location = function(data, map, self){
   this.marker = new google.maps.Marker({
     map: this.map,
     position: this.position,
-    title: this.title()
+    title: this.title(),
+    icon: 'img/bluepin.svg'
   });
 
   this.marker.addListener('click', function(){
