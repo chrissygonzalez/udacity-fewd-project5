@@ -1,4 +1,18 @@
-/** hardcoded locations for map pins **/
+ /** 
+ * @author  :   Chrissy Gonzalez 
+  * @file    main.js 
+  * 
+  * Date    :   November 2015 
+  * Project :   Udacity P5-1: Neighborhood Map 
+  * @description This code creates a neighborhood map of Park Slope, Brooklyn, NY. 
+  * The data model contains a series of locations in the neighborhood. 
+  * The view model draws a Google Map, renders locations as map markers, 
+  * and searches Foursquare and Flickr for related info when the 
+  * markers are tapped or clicked.
+  *
+  */
+
+
 var locations = [{
   position: {lat: 40.678856, lng: -73.987255}, title: 'Ample Hills Creamery'
 },{
@@ -52,7 +66,7 @@ var locationViewModel = function(){
   /** centers the map in Park Slope, Brooklyn */
   self.mapCenter = {lat: 40.678473, lng: -73.978521};
 
-  /** sets up and styles the Google map */
+  /** @function sets up and styles the Google map */
   self.map = new google.maps.Map(document.getElementById('map'), {
     center: self.mapCenter,
     scrollwheel: false,
@@ -134,14 +148,14 @@ var locationViewModel = function(){
     self.infoWindow.open(self.map);
   };
 
-  /** update current location, updates infoWindow content and position */
+  /** @function update current location, updates infoWindow content and position */
   self.changeLocation = function(whichLocation){
     self.currentLocation(whichLocation);
     /** setPosition is part of Google Maps API */
     self.infoWindow.setPosition(whichLocation.position);
   };
 
-  /** update and format content of infoWindow with API data */
+  /** @function update and format content of infoWindow with API data */
   self.updateInfoWindow = function(whichLocation, flickrData, foursqData){
     var contentString = '';
     if(flickrData){
@@ -156,19 +170,19 @@ var locationViewModel = function(){
     self.infoWindow.setContent(contentString);
   };
 
-  /** stop showing locations that don't match filter search */
+  /** @function stop showing locations that don't match filter search */
   self.removeLocation = function(location){
     location.marker.setVisible(false);
     self.locationList.remove(location);
   };
 
-  /** set all locations to inactive, then set selected location to active */
+  /** @function set all locations to inactive, then set selected location to active */
   self.toggleActive = function(whichLocation){
     self.allInactive();
     whichLocation.isActive(!whichLocation.isActive());
   };
 
-  /** set all locations to inActive */
+  /** @function set all locations to inActive */
   self.allInactive = function() {
     for (var i = 0; i < self.locationList().length; i++){
       self.locationList()[i].isActive(false);
@@ -176,19 +190,19 @@ var locationViewModel = function(){
     }
   };
 
-  /** deselect list item on infowindow close */
+  /** @function deselect list item on infowindow close */
   google.maps.event.addListener(self.infoWindow, "closeclick", function(){
     self.allInactive();
   });
 
-  /** clear filter input and reset locationList to its original state */
+  /** @function clear filter input and reset locationList to its original state */
   self.resetFilter = function(){
     locations.forEach(function(locationItem){
       self.locationList.push(new Location(locationItem, self.map, self));
     });
   };
 
-/* this is the new version of my ajax functions */
+/** @function this is the new version of my ajax functions */
 
   self.getApiData = function(whichLocation){
     var myTitle = whichLocation.title;
@@ -238,7 +252,7 @@ var locationViewModel = function(){
     self.getApiData(whichLocation);
   };
 
-  /** opens/closes the filter menu */
+  /** @function opens/closes the filter menu */
   $('#hamburger').click(function(){
     self.isMenuOpen = !self.isMenuOpen;
     console.log(self.isMenuOpen);
@@ -252,7 +266,7 @@ var locationViewModel = function(){
     }
   });
 
-  /** filter location list based on input */
+  /** @function filter location list based on input */
   form.submit(function(){
     var listLength = self.locationList().length;
     var filterVal = $('input:text').val().toLowerCase();
