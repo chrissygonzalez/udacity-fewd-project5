@@ -21,12 +21,6 @@ module.exports = function(grunt) {
 	        }
 	    }
 	},
-    jsdoc2md: {
-        oneOutputFile: {
-            src: "src/js/main.js",
-            dest: "readme.md"
-        }
-    },
     uglify:{
     	my_target: {
 	      files: {
@@ -51,10 +45,9 @@ module.exports = function(grunt) {
 grunt.loadNpmTasks('grunt-contrib-cssmin');
 grunt.loadNpmTasks('grunt-contrib-jshint');
 grunt.loadNpmTasks('grunt-jsdoc');
-grunt.loadNpmTasks("grunt-jsdoc-to-markdown");
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-processhtml');
 
-grunt.registerTask('default', ['cssmin', 'jshint', 'jsdoc', 'jsdoc2md', 'uglify', 'processhtml']);
+grunt.registerTask('default', ['cssmin', 'jshint', 'jsdoc', 'uglify', 'processhtml']);
 
 };
