@@ -328,11 +328,8 @@ var locationViewModel = function(){
    */
   self.onClick = function(whichLocation) {
     self.getApiData(whichLocation);
-    self.isMenuClosed(!self.isMenuClosed());
-    if(self.isMenuOpen) {
-      $('.location-list').animate(
-      {left: '-=350'}, 500);
-      self.isMenuOpen = false;
+    if(!self.isMenuClosed()) {
+      self.isMenuClosed(true);
     }
   };
 
@@ -349,16 +346,6 @@ var locationViewModel = function(){
   self.toggleMenu = function(){
     self.isMenuClosed(!self.isMenuClosed());
     console.log(self.isMenuClosed());
-    /*
-    self.isMenuOpen = !self.isMenuOpen;
-    if(self.isMenuOpen) {
-      $('.location-list').animate(
-      {left: '+=350'}, 500);
-    } else {
-    $('.location-list').animate(
-      {left: '-=350'}, 500);
-    }
-    */
   };
 
   /**
