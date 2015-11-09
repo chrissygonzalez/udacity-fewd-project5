@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * This is my neighborhood map application for Udacity Project 5.
  * @fileOverview Main.js runs my single-page neighborhood map application.
  * @author  Chrissy Gonzalez
@@ -209,12 +237,12 @@ var locationViewModel = function(){
   self.updateInfoWindow = function(whichLocation, flickrData, foursqData){
     var contentString = '';
     if(flickrData){
-      contentString += '<img src="' + flickrData + '" alt="Flickr photo">';
+      contentString += '&lt;img src="' + flickrData + '" alt="Flickr photo">';
     }
     if(foursqData){
-      contentString += '<p><span class="bold">' + whichLocation.title() + '</span><br>' + foursqData + '</p>';
+      contentString += '&lt;p>&lt;span class="bold">' + whichLocation.title() + '&lt;/span>&lt;br>' + foursqData + '&lt;/p>';
     } else {
-      contentString += '<p class="bold">' + whichLocation.title() + '</p>';
+      contentString += '&lt;p class="bold">' + whichLocation.title() + '&lt;/p>';
     }
     self.infoWindow.setContent(contentString);
   };
@@ -232,7 +260,7 @@ var locationViewModel = function(){
    * Sets all locations to inactive. Called by toggleActive.
    */
   self.allInactive = function() {
-    for (var i = 0; i < self.locationList().length; i++){
+    for (var i = 0; i &lt; self.locationList().length; i++){
       self.locationList()[i].isActive(false);
       self.locationList()[i].marker.setAnimation(google.maps.Animation.null);
     }
@@ -265,7 +293,7 @@ var locationViewModel = function(){
        * @type {String}
        */
       $.ajax({
-      url: 'https://api.foursquare.com/v2/venues/search?ll=' + myPos.lat + ',' + myPos.lng + '&intent=match&query=' + myTitle() + '&client_id=RBVKWXN2WH0OQLFMDGKAKNIAIPOLODHEKBLYIHMCQYX3AKJ0&client_secret=LUFOAZGAL4BYJJKBGY2ZJ0MNHRXFS0DOTKCWIW0GXYUI4X1X&v=20151018',
+      url: 'https://api.foursquare.com/v2/venues/search?ll=' + myPos.lat + ',' + myPos.lng + '&amp;intent=match&amp;query=' + myTitle() + '&amp;client_id=RBVKWXN2WH0OQLFMDGKAKNIAIPOLODHEKBLYIHMCQYX3AKJ0&amp;client_secret=LUFOAZGAL4BYJJKBGY2ZJ0MNHRXFS0DOTKCWIW0GXYUI4X1X&amp;v=20151018',
         context: document.body
       }),
       /**
@@ -273,7 +301,7 @@ var locationViewModel = function(){
        * @type {String}
        */
       $.ajax({
-      url: 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d9e2b24a8f57f49550dccb519a8081a2&text=' + searchTxt +'&lat=' + myPos.lat + '&lon=' + myPos.lng + '&per_page=1&format=json&nojsoncallback=1',
+      url: 'https://api.flickr.com/services/rest/?method=flickr.photos.search&amp;api_key=d9e2b24a8f57f49550dccb519a8081a2&amp;text=' + searchTxt +'&amp;lat=' + myPos.lat + '&amp;lon=' + myPos.lng + '&amp;per_page=1&amp;format=json&amp;nojsoncallback=1',
       context: document.body
     })
     ).done(function(data1, data2){
@@ -284,10 +312,10 @@ var locationViewModel = function(){
        */
       if(data1[0].response.venues[0]) {
         venue = data1[0].response.venues[0];
-        address = venue.location.formattedAddress.join('<br>');
+        address = venue.location.formattedAddress.join('&lt;br>');
         phone = venue.contact.formattedPhone;
         foursqData = address;
-        if (phone) { foursqData = foursqData + '<br>' + phone; }
+        if (phone) { foursqData = foursqData + '&lt;br>' + phone; }
       } else {
         foursqData = null;
       }
@@ -369,10 +397,10 @@ var locationViewModel = function(){
     var filterVal = self.searchValue().toLowerCase(); // Get the value of the search input field
 
     // for each location
-    for (var i = 0; i < listLength; i++) {
+    for (var i = 0; i &lt; listLength; i++) {
       var compareString = self.locationList()[i].title().toLowerCase();
       // Does the location name contain the search term?
-      if (compareString.indexOf(filterVal) < 0) {
+      if (compareString.indexOf(filterVal) &lt; 0) {
         self.locationList()[i].marker.setVisible(false); // hide the map marker
         self.locationList()[i]._destroy(true); // hide the location in the list view
       } else {
@@ -422,3 +450,26 @@ var Location = function(data, map, self){
 function initMap() {
   ko.applyBindings(new locationViewModel());
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Location.html">Location</a></li></ul><h3>Global</h3><ul><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#locations">locations</a></li><li><a href="global.html#locationViewModel">locationViewModel</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Sun Nov 08 2015 21:18:44 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

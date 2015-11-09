@@ -24,20 +24,20 @@
     <!-- build:css css/style.min.css -->
     <link href="css/style.css" rel="stylesheet">
     <!-- /build -->
-
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Park Slope Neighborhood Map</title>
   </head>
   <body>
     <header>
-      <button id="hamburger" class="fa fa-navicon"></button>
+      <button id="hamburger" class="fa fa-navicon" data-bind="click: toggleMenu"></button>
       <h1>Neighborhood Map</h1>
     </header>
-    <section class="location-list">
+    <section class="location-list animating" data-bind="css: {'menu-close': isMenuClosed()}">
       <form id="list-filter-form" autocomplete="off">
-        <input id="filter" type="text" placeholder="Filter the list" name="list-filter"></input>
-        <input type="submit" value="Go" />
+        <input id="filter" type="text" placeholder="Filter the list" name="list-filter" data-bind="textInput: searchValue">
+        <input type="submit" value="Clear" data-bind="click: clearSearch">
     </form>
-    <a href="" id="reset">Reset filter</a>
     <hr>
     <ul data-bind="foreach: locationList">
 
@@ -46,13 +46,14 @@
     </ul>
   </section>
     <div id="map"></div>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0E5jPjr2xek50Ny-ljRLtHPZSfcPgLes">
-    </script>
     <script src='js/lib/knockout-3.3.0.js'></script>
     <script src='js/lib/jquery-2.1.4.min.js'></script>
     <!-- build:js js/main.min.js -->
     <script src="js/main.js"></script>
     <!-- /build -->
+    <script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0E5jPjr2xek50Ny-ljRLtHPZSfcPgLes&callback=initMap"
+  async defer>
+</script>
   </body>
 </html>
